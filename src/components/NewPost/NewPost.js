@@ -2,6 +2,8 @@ import React, { Component } from "react";
 
 import "./NewPost.css";
 
+import { createPost } from "../../services/postService";
+
 export class NewPost extends Component {
 	constructor( props ) {
 		super( props );
@@ -22,6 +24,9 @@ export class NewPost extends Component {
 
 	handleSubmit( event ) {
 		event.preventDefault();
+		const { name, newPost } = this.state;
+
+		createPost( name, newPost );
 
 		this.setState( { newPost: "" } );
 	}

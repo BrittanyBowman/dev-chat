@@ -6,7 +6,6 @@ const initialState = {
 };
 
 export default function post( state = initialState, action ) {
-	console.log( action );
 	switch ( action.type ) {
 		case SET_POSTS + "_PENDING":
 			return { loadingPosts: true, posts: state.posts };

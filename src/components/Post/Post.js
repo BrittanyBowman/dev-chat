@@ -2,14 +2,17 @@ import React, { PropTypes } from "react";
 
 import "./Post.css";
 
-export default function Post() {
+export default function Post( { name, text } ) {
 	return (
 		<div className="post">
-			<h3 className="post__name">Ryan Walsh</h3>
+			<h3 className="post__name">{ name }</h3>
 			<span className="post__time">1:43 PM</span>
-			<p className="post__content">Here I am talking about dev stuff ladeedadeeda doot doot jsdghalsjhvbakljdsv nalk jdsvlas dujvalsj dbvals djvbalsdjvbalsjd vbaslj dvba lsj kdvbasl djk vbasljk dvbasl dvbasljdvbasd</p>
+			<p className="post__content">{ text }</p>
 		</div>
 	);
 };
 
-Post.propTypes = {};
+Post.propTypes = {
+	  name: PropTypes.string.isRequired
+	, text: PropTypes.string.isRequired
+};

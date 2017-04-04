@@ -4,6 +4,11 @@ import store from "../store";
 import { setPosts } from "../ducks/post";
 
 export function getPosts() {
-	const foo = new Promise( resolve => setTimeout( () => resolve(), 1000 ) );
-	store.dispatch( setPosts( foo ) );
+	const postsPromise = axios.get( "http://localhost:8080/api/posts" ).then( ( { data } ) => data );
+	store.dispatch( setPosts( postsPromise ) );
+}
+
+export function createPost( name, text ) {
+	const postPromise = axios.post( "http://localhost:8080/api/posts", { name, text } ).then( ( { data } ) => data );
+	store.dispatch( setPosts( postPromise ) );
 }

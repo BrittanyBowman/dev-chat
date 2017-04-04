@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 
 import "./App.css";
 import logo from "./assets/logo.svg";
-import loading from "./assets/radio.svg";
+import loading from "./assets/loading.svg";
 
 import { getPosts } from "./services/postService";
 
@@ -11,11 +11,22 @@ import NewPost from "./components/NewPost/NewPost";
 import Post from "./components/Post/Post";
 
 class App extends Component {
+	componentDidMount() {
+		getPosts();
+	}
+
 	render() {
 		const {
 			  loadingPosts
 			, posts
 		} = this.props;
+		const postElements = posts.map( post => (
+			<Post
+				name={ post.name }
+				text={ post.text }
+			/>
+		) );
+
 		return (
 			<div>
 				<header className="app__top-bar">
@@ -47,8 +58,8 @@ class App extends Component {
 							: "Load more posts..."
 						}
 					</button>
-					<Post />
-					<Post />
+
+					{ postElements }
 				</div>
 			</div>
 		);
