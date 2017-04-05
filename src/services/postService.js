@@ -8,8 +8,8 @@ export function getPosts() {
 	store.dispatch( setPosts( postsPromise ) );
 }
 
-export function createNewPost( name, text ) {
-	const postPromise = axios.post( "http://localhost:8080/api/posts", { name, text } ).then( ( { data } ) =>{
+export function createNewPost( author, content ) {
+	const postPromise = axios.post( "http://localhost:8080/api/posts", { author, content } ).then( ( { data } ) =>{
 		getPosts();
 
 		return data;

@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 
 import "./App.css";
 import logo from "./assets/logo.svg";
-import loading from "./assets/loading.svg";
+import loading from "./assets/loading_blue.svg";
 
 import { getPosts } from "./services/postService";
 
@@ -17,12 +17,11 @@ class App extends Component {
 
 	renderLoadButtonInternals() {
 		const {
-			  error
+			  errorLoadingPosts
 			, loadingPosts
-			, posts
 		} = this.props;
 
-		if ( error ) {
+		if ( errorLoadingPosts ) {
 			return <span className="app__error-text">There was a problem loading the posts. Try again?</span>
 		}
 
@@ -41,14 +40,16 @@ class App extends Component {
 
 	render() {
 		const {
-			  loadingPosts
+			  creatingPost
 			, posts
 		} = this.props;
 
 		const postElements = posts.map( post => (
 			<Post
-				name={ post.name }
-				text={ post.text }
+				author={ post.author }
+				content={ post.content }
+				displayTime={ post.displayTime }
+				key={ post._id }
 			/>
 		) );
 
@@ -68,7 +69,7 @@ class App extends Component {
 					</div>
 				</header>
 
-				<NewPost />
+				<NewPost creatingPost={ creatingPost } />
 
 				<div className="app__post-wrapper">
 					<button

@@ -1,10 +1,15 @@
-import React, { Component } from "react";
+import React, { Component, PropTypes } from "react";
 
 import "./NewPost.css";
+import loading from "../../assets/loading_white.svg";
 
 import { createNewPost } from "../../services/postService";
 
 export class NewPost extends Component {
+	static propTypes = {
+		creatingPost: PropTypes.bool.isRequired
+	};
+
 	constructor( props ) {
 		super( props );
 
@@ -45,6 +50,7 @@ export class NewPost extends Component {
 			  name
 			, newPost
 		} = this.state;
+		const { creatingPost } = this.props;
 
 		return (
 			<form
@@ -69,7 +75,18 @@ export class NewPost extends Component {
 					rows="3"
 					value={ newPost }
 				/>
-				<button className="new-post__submit">Post</button>
+				<button className="new-post__submit">
+					{ creatingPost
+						?
+							<img
+								alt="loading indicator"
+								src={ loading }
+								className="app__loading-icon"
+							/>
+						:
+							"Post"
+					}
+				</button>
 			</form>
 		);
 	}

@@ -49,8 +49,8 @@
     width: 100%;
 }
 
-.app__load-more-posts:focus {
-    outline-color: transparent;
+.app__load-more-posts:focus, .app__load-more-posts:active {
+    outline-color: #ffffff;
 }
 
 .app__loading-icon {

@@ -39,5 +39,8 @@
 
 .new-post__submit:active {
     box-shadow: inset 0 0 33px -1px #5F79AF;
-    outline-color: transparent;
+}
+
+.new-post__submit:focus, .new-post__submit:active {
+    outline-color: #ffffff;
 }
