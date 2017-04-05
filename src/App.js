@@ -15,11 +15,36 @@ class App extends Component {
 		getPosts();
 	}
 
+	renderLoadButtonInternals() {
+		const {
+			  error
+			, loadingPosts
+			, posts
+		} = this.props;
+
+		if ( error ) {
+			return <span className="app__error-text">There was a problem loading the posts. Try again?</span>
+		}
+
+		if ( loadingPosts ) {
+			return (
+				<img
+					alt="loading indicator"
+					className="app__loading-icon"
+					src={ loading }
+				/>
+			);
+		}
+
+		return <span>Load more posts...</span>;
+	}
+
 	render() {
 		const {
 			  loadingPosts
 			, posts
 		} = this.props;
+
 		const postElements = posts.map( post => (
 			<Post
 				name={ post.name }
@@ -46,17 +71,11 @@ class App extends Component {
 				<NewPost />
 
 				<div className="app__post-wrapper">
-					<button className="app__load-more-posts" onClick={ getPosts }>
-						{ loadingPosts
-							? (
-								<img
-									alt="loading indicator"
-									className="app__loading-icon"
-									src={ loading }
-								/>
-							)
-							: "Load more posts..."
-						}
+					<button
+						className="app__load-more-posts"
+						onClick={ getPosts }
+					>
+						{ this.renderLoadButtonInternals() }
 					</button>
 
 					{ postElements }

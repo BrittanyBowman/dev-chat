@@ -15,6 +15,7 @@ export class NewPost extends Component {
 
 		this.handleNameChange = this.handleChange.bind( this, "name" );
 		this.handlePostChange = this.handleChange.bind( this, "newPost" );
+		this.submitOnEnter = this.submitOnEnter.bind( this );
 		this.handleSubmit = this.handleSubmit.bind( this );
 	}
 
@@ -22,13 +23,21 @@ export class NewPost extends Component {
 		this.setState( { [ field ] : event.target.value } );
 	}
 
+	submitOnEnter( event ) {
+		if ( event.keyCode === 13 ) {
+			event.stopPropagation();
+			this.handleSubmit( event );
+		}
+	}
+
 	handleSubmit( event ) {
 		event.preventDefault();
 		const { name, newPost } = this.state;
 
-		createPost( name, newPost );
-
-		this.setState( { newPost: "" } );
+		if ( name && newPost ) {
+			createPost( name, newPost );
+			this.setState( { newPost: "" } );
+		}
 	}
 
 	render() {
@@ -53,6 +62,7 @@ export class NewPost extends Component {
 				<textarea
 					className="new-post__post"
 					cols="30"
+					onKeyDown={ this.submitOnEnter }
 					onChange={ this.handlePostChange }
 					required
 					placeholder="Let's talk about dev stuff"

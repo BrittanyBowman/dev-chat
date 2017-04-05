@@ -1,16 +1,31 @@
 const SET_POSTS = "SET_POSTS";
 
 const initialState = {
-	  loadingPosts: false
+	  error: false
+	, loadingPosts: false
 	, posts: []
 };
 
 export default function post( state = initialState, action ) {
 	switch ( action.type ) {
 		case SET_POSTS + "_PENDING":
-			return { loadingPosts: true, posts: state.posts };
+			return {
+				  error: false
+				, loadingPosts: true
+				, posts: state.posts
+			};
 		case SET_POSTS + "_FULFILLED":
-			return { loadingPosts: false, posts: action.payload };
+			return {
+				  error: false
+				, loadingPosts: false
+				, posts: action.payload
+			};
+		case SET_POSTS + "_REJECTED":
+			return {
+				  error: true
+				, loadingPosts: false
+				, posts: state.posts
+			};
 		default: return state;
 	}
 }
