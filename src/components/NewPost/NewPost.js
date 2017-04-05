@@ -2,7 +2,7 @@ import React, { Component } from "react";
 
 import "./NewPost.css";
 
-import { createPost } from "../../services/postService";
+import { createNewPost } from "../../services/postService";
 
 export class NewPost extends Component {
 	constructor( props ) {
@@ -35,7 +35,7 @@ export class NewPost extends Component {
 		const { name, newPost } = this.state;
 
 		if ( name && newPost ) {
-			createPost( name, newPost );
+			createNewPost( name, newPost );
 			this.setState( { newPost: "" } );
 		}
 	}
@@ -62,8 +62,8 @@ export class NewPost extends Component {
 				<textarea
 					className="new-post__post"
 					cols="30"
-					onKeyDown={ this.submitOnEnter }
 					onChange={ this.handlePostChange }
+					onKeyDown={ this.submitOnEnter }
 					required
 					placeholder="Let's talk about dev stuff"
 					rows="3"
