@@ -1,9 +1,6 @@
 import React, { Component, PropTypes } from "react";
 
 import "./NewPost.css";
-import loading from "../../assets/loading_white.svg";
-
-import { createNewPost } from "../../services/postService";
 
 export class NewPost extends Component {
 	static propTypes = {
@@ -40,7 +37,6 @@ export class NewPost extends Component {
 		const { name, newPost } = this.state;
 
 		if ( name && newPost ) {
-			createNewPost( name, newPost );
 			this.setState( { newPost: "" } );
 		}
 	}
@@ -76,16 +72,7 @@ export class NewPost extends Component {
 					value={ newPost }
 				/>
 				<button className="new-post__submit">
-					{ creatingPost
-						?
-							<img
-								alt="loading indicator"
-								src={ loading }
-								className="app__loading-icon"
-							/>
-						:
-							"Post"
-					}
+					Post
 				</button>
 			</form>
 		);

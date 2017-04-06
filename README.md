@@ -7,6 +7,17 @@
 
 To begin, fork and clone this repository. Once it has finished downloading `cd` into the project root and run `npm i` to fetch the project dependencies. After they are fetched run `npm start` and a browser window will open at `http://localhost:3000` displaying a (non-functioning) chat app. In another terminal window run `npm test` to run the test suite.
 
+### The plan
+
+Today we'll be building a Twitter-esque chat application where you will be able to chat with other DevMountain students. This app will have real, persistent data via communication with a remote server. We'll be building the front end client using React, Redux, and Redux Promise Middleware.
+
+
+### Step 1
+
+**Summary**
+
+
+
 ## Contributions
 
 ### Contributions

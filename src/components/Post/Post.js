@@ -5,9 +5,9 @@ import "./Post.css";
 export default function Post( { author, content, displayTime } ) {
 	return (
 		<div className="post">
-			<h3 className="post__name">{ author }</h3>
-			<span className="post__time">{ displayTime }</span>
-			<p className="post__content">{ content }</p>
+			<h3 className="post__name">{ "" }</h3>
+			<span className="post__time">{ "" }</span>
+			<p className="post__content">{ "" }</p>
 		</div>
 	);
 };
