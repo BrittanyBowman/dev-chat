@@ -16,6 +16,27 @@ Today we'll be building a Twitter-esque chat application where you will be able 
 
 **Summary**
 
+In this step we'll be installing some new dependencies, creating the bones of our Redux setup, and connecting the application to Redux.
+
+**Detailed Instructions**
+
+Start out by installing the following dependencies:
+
+* `redux`
+* `react-redux`
+* `axios` - The library we'll be using to make HTTP requests for data
+* `redux-promise-middleware` - A tool that allows us to handle async actions much easier!
+
+While those download, go ahead and open up `src/ducks/post.js` to set up our reducer. Create an `initialState` variable with one property: `posts` set equal to an empty array. Create and export by default a function `post` which takes the regular two reducer parameters: `state = initialState` and `action`.
+
+Next up, open `src/store.js` and import the following:
+
+* `applyMiddleware` and `createStore` from Redux
+* `promiseMiddleware` from Redux PromiseMiddleware
+* `post` from `src/ducks/post.js`
+
+
+
 
 
 ## Contributions
