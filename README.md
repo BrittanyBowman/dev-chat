@@ -27,7 +27,7 @@ Start out by installing the following dependencies:
 * `axios` - The library we'll be using to make HTTP requests for data
 * `redux-promise-middleware` - A tool that allows us to handle async actions much easier!
 
-While those download, go ahead and open up `src/ducks/post.js` to set up our reducer. Create an `initialState` variable with one property: `posts` set equal to an empty array. Create and export by default a function `post` which takes the regular two reducer parameters: `state = initialState` and `action`.
+While those download, go ahead and open up `src/ducks/post.js` to set up our reducer. Create an `initialState` variable with one property: `posts` set equal to an empty array. Create and export by default a function `post` which takes the regular two reducer parameters: `state = initialState` and `action`. The reducer should `switch` over `action.type`, returning `state` as the `default` case.
 
 Next up, open `src/store.js` and import the following:
 
@@ -43,7 +43,7 @@ Now we need to create and export by default a store configured to use the Promis
 
 That's all it takes to configure the store to use the new middleware! Go ahead and open `src/index.js` and take the standard steps to connect the application to Redux. Import `Provider` from React Redux and `store` from `src/store.js`. Wrap the `App` component in `Provider`, passing `store` as a prop.
 
-Now open up `src/App.js` and import `connect` from React Redux. Underneath the component definition `export default connect( state => state )( App );`. You'll notice we performed our `mapStateToProps` function inline, instead of breaking it out. This is because our `App` component needs the whole of state, and it is simpler to perform a quick, inline, anonymous function. Either way works though!
+Now open up `src/App.js` and import `connect` from React Redux. Underneath the component definition replace the current default export with `export default connect( state => state )( App );`. You'll notice we performed our `mapStateToProps` function inline, instead of breaking it out. This is because our `App` component needs the whole of state, and it is simpler to perform a quick, inline, anonymous function. Either way works though!
 
 That's it for this step! You should now be able to `console.log` `this.props` in the `render` method and see the application state.
 
