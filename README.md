@@ -32,10 +32,62 @@ While those download, go ahead and open up `src/ducks/post.js` to set up our red
 Next up, open `src/store.js` and import the following:
 
 * `applyMiddleware` and `createStore` from Redux
-* `promiseMiddleware` from Redux PromiseMiddleware
+* `promiseMiddleware` from Redux Promise Middleware
 * `post` from `src/ducks/post.js`
 
+Now we need to create and export by default a store configured to use the Promise middleware. Invoke `createStore` passing in three arguments:
 
+* `post` - As usual we need our reducer.
+* `undefined` - Here we could give Redux an initial state, but since we are handling that in our reducer we need to let Redux know that we don't have an initial state here.
+* `applyMiddleware( promiseMiddleware() )` - `applyMiddleware` configures our store to run each action through the middleware before passing it along to our reducer.
+
+That's all it takes to configure the store to use the new middleware! Go ahead and open `src/index.js` and take the standard steps to connect the application to Redux. Import `Provider` from React Redux and `store` from `src/store.js`. Wrap the `App` component in `Provider`, passing `store` as a prop.
+
+Now open up `src/App.js` and import `connect` from React Redux. Underneath the component definition `export default connect( state => state )( App );`. You'll notice we performed our `mapStateToProps` function inline, instead of breaking it out. This is because our `App` component needs the whole of state, and it is simpler to perform a quick, inline, anonymous function. Either way works though!
+
+That's it for this step! You should now be able to `console.log` `this.props` in the `render` method and see the application state.
+
+<details>
+
+<summary><b>Code Solution</b></summary>
+
+<details>
+
+<summary><code>src/ducks/post.js</code></summary>
+
+```javascript
+```
+
+</details>
+
+<details>
+
+<summary><code>src/store.js</code></summary>
+
+```javascript
+```
+
+</details>
+
+<details>
+
+<summary><code>src/index.js</code></summary>
+
+```jsx
+```
+
+</details>
+
+<details>
+
+<summary><code>src/App.js</code></summary>
+
+```jsx
+```
+
+</details>
+
+</details>
 
 
 
