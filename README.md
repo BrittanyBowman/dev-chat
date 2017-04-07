@@ -147,7 +147,7 @@ Start out in `src/ducks/post.js`. We'll first create some constants to help us a
 
 These are the suffixes that the promise middleware will apply to our asynchronous actions, we want to save them to variables for two reasons: ease of use, and avoiding errors!
 
-Next, create an action type of `SET_POSTS` set equal to `"SET_POSTS"`. Underneath the reducer create an action creator function `setPosts` which takes a single parameter `postsPromise`. This action creator should return an object that looks like this `{ payload: postsPromise, type: SET_POSTS }`.
+Next, create an action type of `SET_POSTS` set equal to `"SET_POSTS"`. Underneath the reducer create and export an action creator function `setPosts` which takes a single parameter `postsPromise`. This action creator should return an object that looks like this `{ payload: postsPromise, type: SET_POSTS }`.
 
 Now that we have an action creator ready to go, we need to update our state and reducer to be able to handle that action. Add two new properties to `initialState`:
 
@@ -192,7 +192,17 @@ That's all for this file, go ahead and open up `src/services/postService.js` and
 
 Create a new variable named `BASE_URL` and set it equal to `"practiceapi.devmountain.com/devchat-api/api/"`.
 
-Next we'll need to create and export a function `getWeather` which takes no parameters. Inside the function create a variable `postsPromise` set equal to `axios.get( BASE_URL + "posts" )`, then call `store.dispatch( setPosts( postsPromise ) )`.
+Next we'll need to create and export a function `getPosts` which takes no parameters. Inside the function create a variable `postsPromise` set equal to:
+
+```javascript
+axios.get( BASE_URL + "posts" )
+	.then( response => {
+		console.log( response );
+		return response.data;
+	} );
+```
+
+Then call `store.dispatch( setPosts( postsPromise ) )`.
 
 That's it for this step! Go ahead and call your service function and check out the data that is coming back.
 
@@ -205,7 +215,43 @@ That's it for this step! Go ahead and call your service function and check out t
 <summary><code>src/ducks/post.js</code></summary>
 
 ```javascript
+const PENDING = "_PENDING";
+const FULFILLED = "_FULFILLED";
+const REJECTED = "_REJECTED";
 
+const SET_POSTS = "SET_POSTS";
+
+const initialState = {
+	  errorFetchingPosts: false
+	, loadingPosts: false
+	, posts: []
+};
+
+export default function post( state = initialState, action ) {
+	switch ( action.type ) {
+		case SET_POSTS + PENDING:
+			return Object.assign( {}, state, {
+				  errorFetchingPosts: false
+				, loadingPosts: true
+			} );
+		case SET_POSTS + FULFILLED:
+			return Object.assign( {}, state, {
+				  errorFetchingPosts: false
+				, loadingPosts: false
+				, posts: action.payload
+			} );
+		case SET_POSTS + REJECTED:
+			return Object.assign( {}, state, {
+				  errorLoadingPosts: true
+				, loadingPosts: false
+			} );
+		default: return state;
+	}
+}
+
+export function setPosts( postsPromise ) {
+	return { payload: postsPromise, type: SET_POSTS };
+}
 ```
 
 </details>
@@ -215,7 +261,18 @@ That's it for this step! Go ahead and call your service function and check out t
 <summary><code>src/services/postService.js</code></summary>
 
 ```javascript
+import axios from "axios";
 
+import store from "../store";
+import { setPosts } from "../ducks/post";
+
+const BASE_URL = "practiceapi.devmountain.com/devchat-api/api/";
+
+export function getPosts() {
+	const postsPromise = axios.get( BASE_URL + "posts" ).then( response => response.data );
+
+	store.dispatch( setPosts( postsPromise ) );
+}
 ```
 
 </details>
