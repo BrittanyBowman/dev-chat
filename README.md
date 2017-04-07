@@ -56,6 +56,15 @@ That's it for this step! You should now be able to `console.log` `this.props` in
 <summary><code>src/ducks/post.js</code></summary>
 
 ```javascript
+const initialState = {
+	posts: []
+};
+
+export default function post( state = initialState, action ) {
+	switch ( action.type ) {
+		default: return state;
+	}
+}
 ```
 
 </details>
@@ -65,6 +74,12 @@ That's it for this step! You should now be able to `console.log` `this.props` in
 <summary><code>src/store.js</code></summary>
 
 ```javascript
+import { applyMiddleware, createStore } from "redux";
+import promiseMiddleware from "redux-promise-middleware";
+
+import post from "./ducks/post";
+
+export default createStore( post, undefined, applyMiddleware( promiseMiddleware() ) );
 ```
 
 </details>
@@ -74,6 +89,22 @@ That's it for this step! You should now be able to `console.log` `this.props` in
 <summary><code>src/index.js</code></summary>
 
 ```jsx
+import React from "react";
+import ReactDOM from "react-dom";
+import { Provider } from "react-redux";
+
+import "./index.css";
+
+import store from "./store";
+
+import App from "./App";
+
+ReactDOM.render(
+	<Provider store={ store }>
+		<App />
+	</Provider>
+	, document.getElementById( 'root' )
+);
 ```
 
 </details>
@@ -83,6 +114,17 @@ That's it for this step! You should now be able to `console.log` `this.props` in
 <summary><code>src/App.js</code></summary>
 
 ```jsx
+import React, { Component } from "react";
+import { connect } from "react-redux";
+
+import "./App.css";
+import logo from "./assets/logo.svg";
+
+import NewPost from "./components/NewPost/NewPost";
+
+class App extends Component { /* App definition */ }
+
+export default connect( state => state )( App );
 ```
 
 </details>
