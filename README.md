@@ -205,7 +205,43 @@ That's it for this step! Go ahead and call your service function and check out t
 <summary><code>src/ducks/post.js</code></summary>
 
 ```javascript
+const PENDING = "_PENDING";
+const FULFILLED = "_FULFILLED";
+const REJECTED = "_REJECTED";
 
+const SET_POSTS = "SET_POSTS";
+
+const initialState = {
+	  errorFetchingPosts: false
+	, loadingPosts: false
+	, posts: []
+};
+
+export default function post( state = initialState, action ) {
+	switch ( action.type ) {
+		case SET_POSTS + PENDING:
+			return Object.assign( {}, state, {
+				  errorFetchingPosts: false
+				, loadingPosts: true
+			} );
+		case SET_POSTS + FULFILLED:
+			return Object.assign( {}, state, {
+				  errorFetchingPosts: false
+				, loadingPosts: false
+				, posts: action.payload
+			} );
+		case SET_POSTS + REJECTED:
+			return Object.assign( {}, state, {
+				  errorLoadingPosts: true
+				, loadingPosts: false
+			} );
+		default: return state;
+	}
+}
+
+export function setPosts( postsPromise ) {
+	return { payload: postsPromise, type: SET_POSTS };
+}
 ```
 
 </details>
@@ -215,7 +251,18 @@ That's it for this step! Go ahead and call your service function and check out t
 <summary><code>src/services/postService.js</code></summary>
 
 ```javascript
+import axios from "axios";
 
+import store from "../store";
+import { setPosts } from "../ducks/post";
+
+const BASE_URL = "practiceapi.devmountain.com/devchat-api/api/";
+
+export function getPosts() {
+	const postsPromise = axios.get( BASE_URL + "posts" ).then( response => response.data );
+
+	store.dispatch( setPosts( postsPromise ) );
+}
 ```
 
 </details>
