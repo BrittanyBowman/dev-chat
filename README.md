@@ -206,6 +206,12 @@ Then call `store.dispatch( setPosts( postsPromise ) )`.
 
 That's it for this step! Go ahead and call your service function and check out the data that is coming back.
 
+**Note:** Because the server is (hopefully!) working well, it may difficult to test out what happens during pending requests or rejections. For this reason the API is designed to allow you to fake these things!
+
+* To delay how long a request takes, add a `delay` parameter to the request URL. For example: `axios.get( BASE_URL + "posts?delay=2000" )` would tell the server to wait 2000ms (2 seconds) before responding to the request.
+* To get an error, simply add an `error=true` query. For example: `axios.get( BASE_URL + "posts?error=true" )`.
+
+
 <details>
 
 <summary><b>Code Solution</b></summary>
