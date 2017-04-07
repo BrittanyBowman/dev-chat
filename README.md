@@ -210,7 +210,7 @@ That's it for this step! Go ahead and call your service function and check out t
 
 * To delay how long a request takes, add a `delay` parameter to the request URL. For example: `axios.get( BASE_URL + "posts?delay=2000" )` would tell the server to wait 2000ms (2 seconds) before responding to the request.
 * To get an error, simply add an `error=true` query. For example: `axios.get( BASE_URL + "posts?error=true" )`.
-
+* These can be combined like so: `axios.get( BASE_URL + "posts?error=true&delay=1500" )`
 
 <details>
 
