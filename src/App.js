@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { connect } from "react-redux";
 
 import "./App.css";
 import logo from "./assets/logo.svg";
@@ -39,4 +40,4 @@ class App extends Component {
 	}
 }
 
-export default App;
+export default connect( state => state )( App );
