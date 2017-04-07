@@ -24,8 +24,8 @@ Start out by installing the following dependencies:
 
 * `redux`
 * `react-redux`
-* `axios` - The library we'll be using to make HTTP requests for data
-* `redux-promise-middleware` - A tool that allows us to handle async actions much easier!
+* [`axios`](https://github.com/mzabriskie/axios) - The library we'll be using to make HTTP requests for data
+* [`redux-promise-middleware`](https://github.com/pburtchaell/redux-promise-middleware) - A tool that allows us to handle async actions much easier!
 
 While those download, go ahead and open up `src/ducks/post.js` to set up our reducer. Create an `initialState` variable with one property: `posts` set equal to an empty array. Create and export by default a function `post` which takes the regular two reducer parameters: `state = initialState` and `action`. The reducer should `switch` over `action.type`, returning `state` as the `default` case.
 
@@ -131,7 +131,96 @@ export default connect( state => state )( App );
 
 </details>
 
+### Step 2
 
+**Summary**
+
+In this step we'll be setting up the API request to fetch posts and updating our reducer to be able to handle the asynchronous actions.
+
+**Detailed Instructions**
+
+Start out in `src/ducks/post.js`. We'll first create some constants to help us avoid errors from typos. At the top of the file create the following variables:
+
+* `const PENDING = "_PENDING"`
+* `const FULFILLED = "_FULFILLED"`
+* `const REJECTED = "_REJECTED"`
+
+These are the suffixes that the promise middleware will apply to our asynchronous actions, we want to save them to variables for two reasons: ease of use, and avoiding errors!
+
+Next, create an action type of `SET_POSTS` set equal to `"SET_POSTS"`. Underneath the reducer create an action creator function `setPosts` which takes a single parameter `postsPromise`. This action creator should return an object that looks like this `{ payload: postsPromise, type: SET_POSTS }`.
+
+Now that we have an action creator ready to go, we need to update our state and reducer to be able to handle that action. Add two new properties to `initialState`:
+
+* `loadingPosts` - Set equal to `false`
+* `errorFetchingPosts` - Set equal to `false`
+
+Lastly for this file, we need to update the reducer. Add a new `case` checking `action.type` against `SET_POSTS + PENDING`. In this case, return a new object that looks like this:
+
+```javascript
+Object.assign( {}, state, {
+	  errorFetchingPosts: false // Because we haven't yet heard back from the server, we can't have an error!
+	, loadingPosts: true
+} );
+```
+
+In the `case` of `SET_POSTS + FULFILLED` we want to return this:
+
+```javascript
+Object.assign( {}, state, {
+	  errorFetchingPosts: false // Fulfilled only fires on success
+	, loadingPosts: false // We've finished loading now
+	, posts: action.payload // Once the request returns, our middleware will place the data on action.payload for us.
+} );
+```
+
+You may wonder why we are using `Object.assign` in the above, since we are completely replacing state. Good question! We're just future proofing against changes we'll need to make later.
+
+The last `case` will be `SET_POSTS + REJECTED` and should return this:
+
+```javascript
+Object.assign( {}, state, {
+	  errorFetchingPosts: true // Rejected means we've had an error, we'll need to let the user know in the component.
+	, loadingPosts: false
+} );
+```
+
+That's all for this file, go ahead and open up `src/services/postService.js` and import the following:
+
+* `axios` from Axios
+* `store` from `src/store.js`
+* `setPosts` from `src/ducks/post.js`
+
+Create a new variable named `BASE_URL` and set it equal to `"practiceapi.devmountain.com/devchat-api/api/"`.
+
+Next we'll need to create and export a function `getWeather` which takes no parameters. Inside the function create a variable `postsPromise` set equal to `axios.get( BASE_URL + "posts" )`, then call `store.dispatch( setPosts( postsPromise ) )`.
+
+That's it for this step! Go ahead and call your service function and check out the data that is coming back.
+
+<details>
+
+<summary><b>Code Solution</b></summary>
+
+<details>
+
+<summary><code>src/ducks/post.js</code></summary>
+
+```javascript
+
+```
+
+</details>
+
+<details>
+
+<summary><code>src/services/postService.js</code></summary>
+
+```javascript
+
+```
+
+</details>
+
+</details>
 
 ## Contributions
 
@@ -145,4 +234,4 @@ If you see a problem or a typo, please fork, make the necessary changes, and cre
 
 © DevMountain LLC, 2017. Unauthorized use and/or duplication of this material without express and written permission from DevMountain, LLC is strictly prohibited. Excerpts and links may be used, provided that full and clear credit is given to DevMountain with appropriate and specific direction to the original content.
 
-<img src="https://devmounta.in/img/logowhiteblue.png" width="250">
+<img src="https://s3.amazonaws.com/devmountain/www/img/logowhiteblue.png" width="250">
