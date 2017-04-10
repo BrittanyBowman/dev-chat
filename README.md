@@ -285,6 +285,17 @@ export function getPosts() {
 
 </details>
 
+### Step 3
+
+**Summary**
+
+In this step we will be displaying posts, allowing the user to refresh the list of posts, and displaying a loading indicator while posts load.
+
+**Detailed Instructions**
+
+
+
+
 ## Contributions
 
 ### Contributions
