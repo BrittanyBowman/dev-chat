@@ -466,11 +466,59 @@ Post.propTypes = {
 
 **Summary**
 
-In this step we will be allowing the user to create new posts and POST them to the server.
+In this step we'll be setting up the reducer to handle the creation of posts.
 
 **Detailed Instructions**
 
+This step will take place in `src/ducks/post.js`. To start out, we need to update our initial state to contain information about the post creation. Add two new properties to `initialState`:
 
+* `creatingPost` - Set to `false`. This will serve the same purpose as `loadingPosts`, an indicator that we are waiting on the server to do things.
+* `errorCreatingPost` - Set to `false`. Again, just like `errorLoadingPosts` this will indicate if something went wrong with the request.
+
+Next up we'll need an action type and action creator. The action type will be `CREATE_POST`. The action creator will be an exported function named `createPost` with one parameter - `postPromise`. This funciton should return an object with a `payload` of `postPromise` and a `type` of `CREATE_POST`.
+
+Lastly we need to update the reducer to handle our new action, because the action is async and will be run through Redux Promise Middleware we'll need to add three new `case`s.
+
+In the case of `CREATE_POST + PENDING` we'll want to return the following:
+
+```javascript
+Object.assign( {}, state, { // Keep the rest of our state intact, just changing the relevant bits.
+	  creatingPost: true // We're now in the process of waiting on the server to create the post
+	, errorCreatingPost: false // All good so far!
+} );
+```
+
+In the `case` of `CREATE_POST + FULFILLED` we'll want to return this:
+
+```javascript
+Object.assign( {}, state, {
+	  creatingPost: false // We've got our data back
+	, errorCreatingPost: false // All good, no error
+	, posts: [ action.payload, ...state.posts ] // Add the newly created post to the posts array
+} );
+```
+
+Lastly, in the `case` of `CREATE_POST + REJECTED` we'll return this:
+
+```javascript
+Object.assign( {}, state, {
+	  creatingPost: false // We tried and failed :(
+	, errorCreatingPost: true
+} );
+```
+
+That's it! Our reducer is ready to handle user creation of posts.
+
+<details>
+
+<summary><b>Code Solution</b></summary>
+
+```javascript
+// src/ducks/post.js
+
+```
+
+</details>
 
 ## Contributions
 
