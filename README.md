@@ -147,7 +147,7 @@ Start out in `src/ducks/post.js`. We'll first create some constants to help us a
 
 These are the suffixes that the promise middleware will apply to our asynchronous actions, we want to save them to variables for two reasons: ease of use, and avoiding errors!
 
-Next, create an action type of `SET_POSTS` set equal to `"SET_POSTS"`. Underneath the reducer create an action creator function `setPosts` which takes a single parameter `postsPromise`. This action creator should return an object that looks like this `{ payload: postsPromise, type: SET_POSTS }`.
+Next, create an action type of `SET_POSTS` set equal to `"SET_POSTS"`. Underneath the reducer create and export an action creator function `setPosts` which takes a single parameter `postsPromise`. This action creator should return an object that looks like this `{ payload: postsPromise, type: SET_POSTS }`.
 
 Now that we have an action creator ready to go, we need to update our state and reducer to be able to handle that action. Add two new properties to `initialState`:
 
@@ -192,9 +192,25 @@ That's all for this file, go ahead and open up `src/services/postService.js` and
 
 Create a new variable named `BASE_URL` and set it equal to `"practiceapi.devmountain.com/devchat-api/api/"`.
 
-Next we'll need to create and export a function `getWeather` which takes no parameters. Inside the function create a variable `postsPromise` set equal to `axios.get( BASE_URL + "posts" )`, then call `store.dispatch( setPosts( postsPromise ) )`.
+Next we'll need to create and export a function `getPosts` which takes no parameters. Inside the function create a variable `postsPromise` set equal to:
+
+```javascript
+axios.get( BASE_URL + "posts" )
+	.then( response => {
+		console.log( response );
+		return response.data;
+	} );
+```
+
+Then call `store.dispatch( setPosts( postsPromise ) )`.
 
 That's it for this step! Go ahead and call your service function and check out the data that is coming back.
+
+**Note:** Because the server is (hopefully!) working well, it may difficult to test out what happens during pending requests or rejections. For this reason the API is designed to allow you to fake these things!
+
+* To delay how long a request takes, add a `delay` parameter to the request URL. For example: `axios.get( BASE_URL + "posts?delay=2000" )` would tell the server to wait 2000ms (2 seconds) before responding to the request.
+* To get an error, simply add an `error=true` query. For example: `axios.get( BASE_URL + "posts?error=true" )`.
+* These can be combined like so: `axios.get( BASE_URL + "posts?error=true&delay=1500" )`
 
 <details>
 
@@ -263,6 +279,184 @@ export function getPosts() {
 
 	store.dispatch( setPosts( postsPromise ) );
 }
+```
+
+</details>
+
+</details>
+
+### Step 3
+
+**Summary**
+
+In this step we will be displaying posts, allowing the user to refresh the list of posts, and displaying a loading indicator while posts load.
+
+**Detailed Instructions**
+
+We'll start out in `src/App.js`. Import `getPosts` from `src/services/postService.js`. Create a `componentDidMount` lifecycle method which simply invokes `getPosts`. Next `map` over `this.props.posts` returning the following JSX:
+```jsx
+<Post
+	author={ post.author }
+	content={ post.content }
+	displayTime={ post.displayTime }
+	key={ post._id }
+/>
+```
+
+There should now be a list of posts displaying, but with no data. Go ahead and update `src/components/Post/Post.js` to use its props to display the correct information.
+
+Now that users can see a list of posts, let's update the application so that they can refresh the list of posts. We're already set up to handle this, so it should be as easy as changing the click handler in the "Load more posts" button to invoke `getPosts`.
+
+Since we're retrieving data, we need to let the user know that this might take some time! We'll display loading information in the `button` element in `src/App.js`. Because the promise can have three statuses we'll need three different pieces of JSX, let's break this out into a new mini-render method named `renderLoadButtonInternals`. This function will take two parameters:
+
+* `errorLoadingPosts` - The boolean in application state representing whether or not an error has occured when fetching the posts
+* `loadingPosts` - The boolean in application state telling us whether or not we are waiting for the posts to load.
+
+If there was an error loading the posts, return the following JSX:
+
+```jsx
+<span className="app__error-text">There was a problem loading the posts. Try again?</span>
+```
+
+Before we can handle the loading display we'll need to import `loading` from `src/assets/loading_blue.svg`. Now, if the posts are loading we can return a loading image:
+
+```jsx
+<img
+	alt="loading indicator"
+	className="app__loading-icon"
+	src={ loading }
+/>
+```
+
+If we don't have an error and we aren't loading we can simply return the following:
+
+```jsx
+<span>Load more posts...</span>
+```
+
+Replace the static "Load more posts..." text inside of the button with the new `renderLoadButtonInterals` method, passing in `this.props.errorLoadingPosts` and `this.props.loadingPosts`.
+
+<details>
+
+<summary><b>Code Solution</b></summary>
+
+<details>
+
+<summary><code>src/App.js</code></summary>
+
+</details>
+
+```jsx
+import React, { Component } from "react";
+import { connect } from "react-redux";
+
+import "./App.css";
+import logo from "./assets/logo.svg";
+import loading from "./assets/loading_blue.svg";
+
+import { getPosts } from "./services/postService";
+
+import NewPost from "./components/NewPost/NewPost";
+import Post from "./components/Post/Post";
+
+class App extends Component {
+	componentDidMount() {
+		getPosts();
+	}
+
+	renderLoadButtonInternals( errorLoadingPosts, loadingPosts ) {
+		if ( errorLoadingPosts ) {
+			return <span className="app__error-text">There was a problem loading the posts. Try again?</span>;
+		}
+
+		if ( loadingPosts ) {
+			return (
+				<img
+					alt="loading indicator"
+					className="app__loading-icon"
+					src={ loading }
+				/>
+			);
+		}
+
+		return <span>Load more posts...</span>
+	}
+
+	render() {
+		const {
+			  errorLoadingPosts
+			, loadingPosts
+			, posts
+		} = this.props;
+		const postElements = posts.map( post => (
+			<Post
+				author={ post.author }
+				content={ post.content }
+				displayTime={ post.displayTime }
+				key={ post._id }
+			/>
+		) );
+
+		return (
+			<div>
+				<header className="app__top-bar">
+					<div className="app__top-bar-content">
+						Dev
+						<div className="app__logo-wrapper">
+							<img
+								alt="devmountain logo"
+								className="app__logo"
+								src={ logo }
+							/>
+						</div>
+						Chat
+					</div>
+				</header>
+
+				<NewPost />
+
+				<div className="app__post-wrapper">
+					<button
+						className="app__load-more-posts"
+						onClick={ getPosts }
+					>
+						{ this.renderLoadButtonInternals( errorLoadingPosts, loadingPosts ) }
+					</button>
+
+					{ postElements }
+				</div>
+			</div>
+		);
+	}
+}
+
+export default connect( state => state )( App );
+```
+
+<details>
+
+<summary><code>src/components/Post/Post.js</code></summary>
+
+```jsx
+import React, { PropTypes } from "react";
+
+import "./Post.css";
+
+export default function Post( { author, content, displayTime } ) {
+	return (
+		<div className="post">
+			<h3 className="post__name">{ author }</h3>
+			<span className="post__time">{ displayTime }</span>
+			<p className="post__content">{ content }</p>
+		</div>
+	);
+};
+
+Post.propTypes = {
+	  author: PropTypes.string.isRequired
+	, content: PropTypes.string.isRequired
+	, displayTime: PropTypes.string.isRequired
+};
 ```
 
 </details>
