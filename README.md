@@ -293,8 +293,74 @@ In this step we will be displaying posts, allowing the user to refresh the list 
 
 **Detailed Instructions**
 
+We'll start out in `src/App.js`. Import `getPosts` from `src/services/postService.js`. Create a `componentDidMount` lifecycle method which simply invokes `getPosts`. Next `map` over `this.props.posts` returning the following JSX:
+```jsx
+<Post
+	author={ post.author }
+	content={ post.content }
+	displayTime={ post.displayTime }
+	key={ post._id }
+/>
+```
 
+There should now be a list of posts displaying, but with no data. Go ahead and update `src/components/Post/Post.js` to use its props to display the correct information.
 
+Now that users can see a list of posts, let's update the application so that they can refresh the list of posts. We're already set up to handle this, so it should be as easy as changing the click handler in the "Load more posts" button to invoke `getPosts`.
+
+Since we're retrieving data, we need to let the user know that this might take some time! We'll display loading information in the `button` element in `src/App.js`. Because the promise can have three statuses we'll need three different pieces of JSX, let's break this out into a new mini-render method named `renderLoadButtonInternals`. This function will take two parameters:
+
+* `errorLoadingPosts` - The boolean in application state representing whether or not an error has occured when fetching the posts
+* `loadingPosts` - The boolean in application state telling us whether or not we are waiting for the posts to load.
+
+If there was an error loading the posts, return the following JSX:
+
+```jsx
+<span className="app__error-text">There was a problem loading the posts. Try again?</span>
+```
+
+Before we can handle the loading display we'll need to import `loading` from `src/assets/loading_blue.svg`. Now, if the posts are loading we can return a loading image:
+
+```jsx
+<img
+	alt="loading indicator"
+	className="app__loading-icon"
+	src={ loading }
+/>
+```
+
+If we don't have an error and we aren't loading we can simply return the following:
+
+```jsx
+<span>Load more posts...</span>
+```
+
+Replace the static "Load more posts..." text inside of the button with the new `renderLoadButtonInterals` method, passing in `this.props.errorLoadingPosts` and `this.props.loadingPosts`.
+
+<details>
+
+<summary><b>Code Solution</b></summary>
+
+<details>
+
+<summary><code>src/App.js</code></summary>
+
+</details>
+
+```jsx
+
+```
+
+<details>
+
+<summary><code>src/components/Post/Post.js</code></summary>
+
+```jsx
+
+```
+
+</details>
+
+</details>
 
 ## Contributions
 
