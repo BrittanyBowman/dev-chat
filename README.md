@@ -462,6 +462,16 @@ Post.propTypes = {
 
 </details>
 
+### Step 4
+
+**Summary**
+
+In this step we will be allowing the user to create new posts and POST them to the server.
+
+**Detailed Instructions**
+
+
+
 ## Contributions
 
 ### Contributions
