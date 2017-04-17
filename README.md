@@ -293,7 +293,7 @@ In this step we will be displaying posts, allowing the user to refresh the list 
 
 **Detailed Instructions**
 
-We'll start out in `src/App.js`. Import `getPosts` from `src/services/postService.js`. Create a `componentDidMount` lifecycle method which simply invokes `getPosts`. Next `map` over `this.props.posts` returning the following JSX:
+We'll start out in `src/App.js`. Import `getPosts` from `src/services/postService.js` and `Post` from `src/components/Post/Post.js`. Create a `componentDidMount` lifecycle method which simply invokes `getPosts`. Next create a variable named `postElements` in `render` by `map`ing over `this.props.posts` returning the following JSX:
 ```jsx
 <Post
 	author={ post.author }
@@ -302,8 +302,7 @@ We'll start out in `src/App.js`. Import `getPosts` from `src/services/postServic
 	key={ post._id }
 />
 ```
-
-There should now be a list of posts displaying, but with no data. Go ahead and update `src/components/Post/Post.js` to use its props to display the correct information.
+Render `postElements` just beneath the "Load more posts..." button. There should now be a list of posts displaying, but with no data. Go ahead and update `src/components/Post/Post.js` to use its props to display the correct information.
 
 Now that users can see a list of posts, let's update the application so that they can refresh the list of posts. We're already set up to handle this, so it should be as easy as changing the click handler in the "Load more posts" button to invoke `getPosts`.
 
@@ -318,7 +317,7 @@ If there was an error loading the posts, return the following JSX:
 <span className="app__error-text">There was a problem loading the posts. Try again?</span>
 ```
 
-Before we can handle the loading display we'll need to import `loading` from `src/assets/loading_blue.svg`. Now, if the posts are loading we can return a loading image:
+Next up we need to indicate to the user that posts are loading, we'll use an image for this. Import `loading` from `src/assets/loading_blue.svg`. Now, if the posts are loading we'll return the following loading image:
 
 ```jsx
 <img
