@@ -344,8 +344,6 @@ Replace the static "Load more posts..." text inside of the button with the new `
 
 <summary><code>src/App.js</code></summary>
 
-</details>
-
 ```jsx
 import React, { Component } from "react";
 import { connect } from "react-redux";
@@ -432,6 +430,8 @@ class App extends Component {
 
 export default connect( state => state )( App );
 ```
+
+</details>
 
 <details>
 
