@@ -2,16 +2,35 @@ const PENDING = "_PENDING";
 const FULFILLED = "_FULFILLED";
 const REJECTED = "_REJECTED";
 
+const CREATE_POST = "CREATE_POST";
 const SET_POSTS = "SET_POSTS";
 
 const initialState = {
-	  errorFetchingPosts: false
+	  creatingPost: false
+	, errorCreatingPost: false
+	, errorFetchingPosts: false
 	, loadingPosts: false
 	, posts: []
 };
 
 export default function post( state = initialState, action ) {
 	switch ( action.type ) {
+		case CREATE_POST + PENDING:
+			return Object.assign( {}, state, {
+				  creatingPost: true
+				, errorCreatingPost: false
+			} );
+		case CREATE_POST + FULFILLED:
+			return Object.assign( {}, state, {
+				  creatingPost: false
+				, errorCreatingPost: false
+				, posts: [ action.payload, ...state.posts ]
+			} );
+		case CREATE_POST + REJECTED:
+			return Object.assign( {}, state, {
+				  creatingPost: false
+				, errorCreatingPost: true
+			} );
 		case SET_POSTS + PENDING:
 			return Object.assign( {}, state, {
 				  errorFetchingPosts: false
@@ -30,6 +49,10 @@ export default function post( state = initialState, action ) {
 			} );
 		default: return state;
 	}
+}
+
+export function createPost( postPromise ) {
+	return { payload: postPromise, type: CREATE_POST };
 }
 
 export function setPosts( postsPromise ) {
