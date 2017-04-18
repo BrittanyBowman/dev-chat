@@ -622,241 +622,241 @@ That's it! You should now be able to create posts, load posts, and see loading i
 
 <details>
 
-	<summary><b>Code Solution</b></summary>
+<summary><b>Code Solution</b></summary>
 
-	<details>
+<details>
 
-		<summary><code>src/services/postService.js</code></summary>
+<summary><code>src/services/postService.js</code></summary>
 
-		```javascript
-		import axios from "axios";
+```javascript
+import axios from "axios";
 
-		import store from "../store";
-		import { createPost, setPosts } from "../ducks/post";
+import store from "../store";
+import { createPost, setPosts } from "../ducks/post";
 
-		const BASE_URL = "http://localhost:8080/api/";
+const BASE_URL = "http://localhost:8080/api/";
 
-		export function getPosts() {
-			const postsPromise = axios.get( BASE_URL + "posts" ).then( response => response.data );
+export function getPosts() {
+	const postsPromise = axios.get( BASE_URL + "posts" ).then( response => response.data );
 
-			store.dispatch( setPosts( postsPromise ) );
+	store.dispatch( setPosts( postsPromise ) );
+}
+
+export function createNewPost( author, content ) {
+	const postPromise = axios.post( "http://localhost:8080/api/posts", { author, content } )
+		.then( ( response ) =>{
+			getPosts();
+
+			return response.data;
+		} );
+	store.dispatch( createPost( postPromise ) );
+}
+```
+
+
+</details>
+
+<details>
+
+<summary><code>src/components/NewPost/NewPost.js</code></summary>
+
+```jsx
+import React, { Component, PropTypes } from "react";
+
+import "./NewPost.css";
+import loading from "../../assets/loading_white.svg";
+
+import { createNewPost } from "../../services/postService";
+
+export class NewPost extends Component {
+	static propTypes = {
+		creatingPost: PropTypes.bool.isRequired
+	};
+
+	constructor( props ) {
+		super( props );
+
+		this.state = {
+			  name: ""
+			, newPost: ""
+		};
+
+		this.handleNameChange = this.handleChange.bind( this, "name" );
+		this.handlePostChange = this.handleChange.bind( this, "newPost" );
+		this.submitOnEnter = this.submitOnEnter.bind( this );
+		this.handleSubmit = this.handleSubmit.bind( this );
+	}
+
+	handleChange( field, event ) {
+		this.setState( { [ field ] : event.target.value } );
+	}
+
+	submitOnEnter( event ) {
+		// The default behavior of a textarea is to line break when someone presses the enter key
+		// This function changes that so the message is submitted instead
+		if ( event.keyCode === 13 ) {
+			event.stopPropagation();
+			this.handleSubmit( event );
 		}
+	}
 
-		export function createNewPost( author, content ) {
-			const postPromise = axios.post( "http://localhost:8080/api/posts", { author, content } )
-				.then( ( response ) =>{
-					getPosts();
+	handleSubmit( event ) {
+		event.preventDefault();
+		const { name, newPost } = this.state;
 
-					return response.data;
-				} );
-			store.dispatch( createPost( postPromise ) );
+		if ( name && newPost ) {
+			createNewPost( name, newPost );
+			this.setState( { newPost: "" } );
 		}
-		```
+	}
 
+	render() {
+		const {
+			  name
+			, newPost
+		} = this.state;
+		const { creatingPost } = this.props;
 
-	</details>
-
-	<details>
-
-		<summary><code>src/components/NewPost/NewPost.js</code></summary>
-
-		```jsx
-		import React, { Component, PropTypes } from "react";
-
-		import "./NewPost.css";
-		import loading from "../../assets/loading_white.svg";
-
-		import { createNewPost } from "../../services/postService";
-
-		export class NewPost extends Component {
-			static propTypes = {
-				creatingPost: PropTypes.bool.isRequired
-			};
-
-			constructor( props ) {
-				super( props );
-
-				this.state = {
-					  name: ""
-					, newPost: ""
-				};
-
-				this.handleNameChange = this.handleChange.bind( this, "name" );
-				this.handlePostChange = this.handleChange.bind( this, "newPost" );
-				this.submitOnEnter = this.submitOnEnter.bind( this );
-				this.handleSubmit = this.handleSubmit.bind( this );
-			}
-
-			handleChange( field, event ) {
-				this.setState( { [ field ] : event.target.value } );
-			}
-
-			submitOnEnter( event ) {
-				// The default behavior of a textarea is to line break when someone presses the enter key
-				// This function changes that so the message is submitted instead
-				if ( event.keyCode === 13 ) {
-					event.stopPropagation();
-					this.handleSubmit( event );
-				}
-			}
-
-			handleSubmit( event ) {
-				event.preventDefault();
-				const { name, newPost } = this.state;
-
-				if ( name && newPost ) {
-					createNewPost( name, newPost );
-					this.setState( { newPost: "" } );
-				}
-			}
-
-			render() {
-				const {
-					  name
-					, newPost
-				} = this.state;
-				const { creatingPost } = this.props;
-
-				return (
-					<form
-						className="new-post"
-						onSubmit={ this.handleSubmit }
-					>
-						<input
-							className="new-post__name"
-							onChange={ this.handleNameChange }
-							placeholder="My name is..."
-							required
-							type="text"
-							value={ name }
-						/>
-						<textarea
-							className="new-post__post"
-							cols="30"
-							onChange={ this.handlePostChange }
-							onKeyDown={ this.submitOnEnter }
-							required
-							placeholder="Let's talk about dev stuff"
-							rows="3"
-							value={ newPost }
-						/>
-						<button className="new-post__submit">
-							{ creatingPost
-								? ( <img
-									alt="loading indicator"
-									src={ loading }
-									className="app__loading-icon"
-								/> )
-								: "Post"
-
-							}
-						</button>
-					</form>
-				);
-			}
-		}
-
-		export default NewPost;
-		```
-
-
-	</details>
-
-	<details>
-
-		<summary><code>src/App.js</code></summary>
-
-		```jsx
-		import React, { Component } from "react";
-		import { connect } from "react-redux";
-
-		import "./App.css";
-		import logo from "./assets/logo.svg";
-		import loading from "./assets/loading_blue.svg";
-
-		import { getPosts } from "./services/postService";
-
-		import NewPost from "./components/NewPost/NewPost";
-		import Post from "./components/Post/Post";
-
-		class App extends Component {
-			componentDidMount() {
-				getPosts();
-			}
-
-			renderLoadButtonInternals( errorLoadingPosts, loadingPosts ) {
-				if ( errorLoadingPosts ) {
-					return <span className="app__error-text">There was a problem loading the posts. Try again?</span>;
-				}
-
-				if ( loadingPosts ) {
-					return (
-						<img
+		return (
+			<form
+				className="new-post"
+				onSubmit={ this.handleSubmit }
+			>
+				<input
+					className="new-post__name"
+					onChange={ this.handleNameChange }
+					placeholder="My name is..."
+					required
+					type="text"
+					value={ name }
+				/>
+				<textarea
+					className="new-post__post"
+					cols="30"
+					onChange={ this.handlePostChange }
+					onKeyDown={ this.submitOnEnter }
+					required
+					placeholder="Let's talk about dev stuff"
+					rows="3"
+					value={ newPost }
+				/>
+				<button className="new-post__submit">
+					{ creatingPost
+						? ( <img
 							alt="loading indicator"
-							className="app__loading-icon"
 							src={ loading }
-						/>
-					);
-				}
+							className="app__loading-icon"
+						/> )
+						: "Post"
 
-				return <span>Load more posts...</span>
-			}
+					}
+				</button>
+			</form>
+		);
+	}
+}
 
-			render() {
-				const {
-					  creatingPost
-					, errorLoadingPosts
-					, loadingPosts
-					, posts
-				} = this.props;
+export default NewPost;
+```
 
-				const postElements = posts.map( post => (
-					<Post
-						author={ post.author }
-						content={ post.content }
-						displayTime={ post.displayTime }
-						key={ post._id }
-					/>
-				) );
 
-				return (
-					<div>
-						<header className="app__top-bar">
-							<div className="app__top-bar-content">
-								Dev
-								<div className="app__logo-wrapper">
-									<img
-										alt="devmountain logo"
-										className="app__logo"
-										src={ logo }
-									/>
-								</div>
-								Chat
-							</div>
-						</header>
+</details>
 
-						<NewPost creatingPost={ creatingPost } />
+<details>
 
-						<div className="app__post-wrapper">
-							<button
-								className="app__load-more-posts"
-								onClick={ getPosts }
-							>
-								{ this.renderLoadButtonInternals( errorLoadingPosts, loadingPosts ) }
-							</button>
+<summary><code>src/App.js</code></summary>
 
-							{ postElements }
-						</div>
-					</div>
-				);
-			}
+```jsx
+import React, { Component } from "react";
+import { connect } from "react-redux";
+
+import "./App.css";
+import logo from "./assets/logo.svg";
+import loading from "./assets/loading_blue.svg";
+
+import { getPosts } from "./services/postService";
+
+import NewPost from "./components/NewPost/NewPost";
+import Post from "./components/Post/Post";
+
+class App extends Component {
+	componentDidMount() {
+		getPosts();
+	}
+
+	renderLoadButtonInternals( errorLoadingPosts, loadingPosts ) {
+		if ( errorLoadingPosts ) {
+			return <span className="app__error-text">There was a problem loading the posts. Try again?</span>;
 		}
 
-		export default connect( state => state )( App );
-		```
+		if ( loadingPosts ) {
+			return (
+				<img
+					alt="loading indicator"
+					className="app__loading-icon"
+					src={ loading }
+				/>
+			);
+		}
+
+		return <span>Load more posts...</span>
+	}
+
+	render() {
+		const {
+			  creatingPost
+			, errorLoadingPosts
+			, loadingPosts
+			, posts
+		} = this.props;
+
+		const postElements = posts.map( post => (
+			<Post
+				author={ post.author }
+				content={ post.content }
+				displayTime={ post.displayTime }
+				key={ post._id }
+			/>
+		) );
+
+		return (
+			<div>
+				<header className="app__top-bar">
+					<div className="app__top-bar-content">
+						Dev
+						<div className="app__logo-wrapper">
+							<img
+								alt="devmountain logo"
+								className="app__logo"
+								src={ logo }
+							/>
+						</div>
+						Chat
+					</div>
+				</header>
+
+				<NewPost creatingPost={ creatingPost } />
+
+				<div className="app__post-wrapper">
+					<button
+						className="app__load-more-posts"
+						onClick={ getPosts }
+					>
+						{ this.renderLoadButtonInternals( errorLoadingPosts, loadingPosts ) }
+					</button>
+
+					{ postElements }
+				</div>
+			</div>
+		);
+	}
+}
+
+export default connect( state => state )( App );
+```
 
 
-	</details>
+</details>
 
 
 </details>
