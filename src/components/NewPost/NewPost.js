@@ -26,6 +26,8 @@ export class NewPost extends Component {
 	}
 
 	submitOnEnter( event ) {
+		// The default behavior of a textarea is to line break when someone presses the enter key
+		// This function changes that so the message is submitted instead
 		if ( event.keyCode === 13 ) {
 			event.stopPropagation();
 			this.handleSubmit( event );
