@@ -579,6 +579,87 @@ export function setPosts( postsPromise ) {
 
 </details>
 
+### Step 5
+
+**Summary**
+
+In this step we'll be connecting our recently updated reducer to the view, allowing users to create new posts and receive loading information as the API processes the post.
+
+**Detailed Instructions**
+
+We'll start this step in `src/services/postService.js`, where we'll be setting up the logic for making a POST request. Start by importing the action creator `createPost` from `src/ducks/post.js`. Next, create and export a new function named `createNewPost` with two parameters:  `author` and `content`. In `createNewPost` create a new variable named `postPromise` and set it equal to the following:
+
+```javascript
+axios.post( "http://localhost:8080/api/posts", { author, content } )
+	.then( ( response ) =>{
+		// The request will only return the new post
+		// We'll take this opportunity to also refresh the posts
+		getPosts();
+
+		return response.data;
+} );
+```
+
+Lastly for this function, `dispatch` your action creator, passing in `postPromise`.
+
+Now that we're ready to make the request, let's implement it in the component. Open up `src/Components/NewPost/NewPost.js` and import `createNewPost` from `src/services/postService.js`. In the `handleSubmit` method's `if` statement, invoke `createNewPost` passing in `name` and `newPost`.
+
+A user should now be able to make new posts and see the list update, but not any loading information. Let's fix that! We could connect `NewPost` to Redux directly to get the info we need, but since the parent component `App` is already connected it will be easier to just use props.
+
+Open up `src/App.js` and pass `props.creatingPost` as a prop to `NewPost`. Back in `src/components/NewPost/NewPost.js` let's make use of this prop. Import `loading` from `src/assets/loading_white.svg`. Inside of the "Post" button we'll replace the static text with a ternary. When `props.creatingPost` is truthy display the following JSX:
+
+```jsx
+<img
+	alt="loading indicator"
+	src={ loading }
+	className="app__loading-icon"
+/>
+```
+
+Otherwise, just display `"Post"`.
+
+That's it! You should now be able to create posts, load posts, and see loading indicators for either. Chat away!
+
+<details>
+
+	<summary><b>Code Solution</b></summary>
+
+	<details>
+
+		<summary><code>src/services/postService.js</code></summary>
+
+		```javascript
+
+		```
+
+
+	</details>
+
+	<details>
+
+		<summary><code>src/components/NewPost/NewPost.js</code></summary>
+
+		```jsx
+
+		```
+
+
+	</details>
+
+	<details>
+
+		<summary><code>src/App.js</code></summary>
+
+		```jsx
+
+		```
+
+
+	</details>
+
+
+</details>
+
 ## Contributions
 
 ### Contributions
