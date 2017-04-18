@@ -35,10 +35,12 @@ class App extends Component {
 
 	render() {
 		const {
-			  errorLoadingPosts
+			  creatingPost
+			, errorLoadingPosts
 			, loadingPosts
 			, posts
 		} = this.props;
+
 		const postElements = posts.map( post => (
 			<Post
 				author={ post.author }
@@ -64,7 +66,7 @@ class App extends Component {
 					</div>
 				</header>
 
-				<NewPost />
+				<NewPost creatingPost={ creatingPost } />
 
 				<div className="app__post-wrapper">
 					<button
